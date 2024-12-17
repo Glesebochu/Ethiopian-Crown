@@ -1,0 +1,3 @@
+/home/dawit/Desktop/everything/class materials/Hilcoe/Year IV/Term I/Computer Graphics/Ethiopian-Crown/EthioCrown/build/CMakeFiles/EthioCrown.dir
+/home/dawit/Desktop/everything/class materials/Hilcoe/Year IV/Term I/Computer Graphics/Ethiopian-Crown/EthioCrown/build/CMakeFiles/edit_cache.dir
+/home/dawit/Desktop/everything/class materials/Hilcoe/Year IV/Term I/Computer Graphics/Ethiopian-Crown/EthioCrown/build/CMakeFiles/rebuild_cache.dir
