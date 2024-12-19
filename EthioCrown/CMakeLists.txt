@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 17)
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/Dependencies/include)
 
+# Include GLM (installed in the default system include path)
+include_directories(/usr/include)
+
 # Add source files
 set(SOURCES
     ${CMAKE_SOURCE_DIR}/glad.c
