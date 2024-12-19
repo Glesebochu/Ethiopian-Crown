@@ -218,6 +218,9 @@ EthioCrown_IS_TOP_LEVEL:STATIC=ON
 //Value Computed by CMake
 EthioCrown_SOURCE_DIR:STATIC=/home/dawit/Desktop/everything/class materials/Hilcoe/Year IV/Term I/Computer Graphics/Ethiopian-Crown/EthioCrown
 
+//The directory containing a CMake configuration file for GLM.
+GLM_DIR:PATH=GLM_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries
