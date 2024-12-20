@@ -139,9 +139,13 @@
     <ClInclude Include="Dependencies\include\GLFW\glfw3.h" />
     <ClInclude Include="Dependencies\include\GLFW\glfw3native.h" />
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
+    <ClInclude Include="shader.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitignore" />
     <None Include="Dependencies\libraries\glfw3.dll" />
+    <None Include="fragment_shader.glsl" />
+    <None Include="vertex_shader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\libraries\glfw3.lib" />
