@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="V2_main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\include\glad\glad.h" />
