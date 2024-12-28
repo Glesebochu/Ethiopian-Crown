@@ -34,6 +34,41 @@ void generateCircle(float radius, int sectors, GLfloat* circleVertices, float y)
     }
 }
 
+void generateCross(float baseWidth, float height, float depth, float beamThickness, GLfloat* vertices) {
+    int index = 0;
+
+    // Vertices for the vertical beam (centered at the origin)
+    float halfWidth = beamThickness / 2;
+    float halfDepth = depth / 2;
+
+    // Bottom of vertical beam
+    vertices[index++] = -halfWidth; vertices[index++] = 0.0f; vertices[index++] = -halfDepth;
+    vertices[index++] = halfWidth; vertices[index++] = 0.0f; vertices[index++] = -halfDepth;
+    vertices[index++] = halfWidth; vertices[index++] = height; vertices[index++] = -halfDepth;
+    vertices[index++] = -halfWidth; vertices[index++] = height; vertices[index++] = -halfDepth;
+
+    // Top of vertical beam
+    vertices[index++] = -halfWidth; vertices[index++] = 0.0f; vertices[index++] = halfDepth;
+    vertices[index++] = halfWidth; vertices[index++] = 0.0f; vertices[index++] = halfDepth;
+    vertices[index++] = halfWidth; vertices[index++] = height; vertices[index++] = halfDepth;
+    vertices[index++] = -halfWidth; vertices[index++] = height; vertices[index++] = halfDepth;
+
+    // Horizontal beam (centered at the top of the vertical beam)
+    float halfLength = baseWidth / 2;
+    float verticalBeamTop = height - (beamThickness / 2);
+
+    vertices[index++] = -halfLength; vertices[index++] = verticalBeamTop - halfWidth; vertices[index++] = -halfDepth;
+    vertices[index++] = halfLength; vertices[index++] = verticalBeamTop - halfWidth; vertices[index++] = -halfDepth;
+    vertices[index++] = halfLength; vertices[index++] = verticalBeamTop + halfWidth; vertices[index++] = -halfDepth;
+    vertices[index++] = -halfLength; vertices[index++] = verticalBeamTop + halfWidth; vertices[index++] = -halfDepth;
+
+    // Back face of the horizontal beam
+    vertices[index++] = -halfLength; vertices[index++] = verticalBeamTop - halfWidth; vertices[index++] = halfDepth;
+    vertices[index++] = halfLength; vertices[index++] = verticalBeamTop - halfWidth; vertices[index++] = halfDepth;
+    vertices[index++] = halfLength; vertices[index++] = verticalBeamTop + halfWidth; vertices[index++] = halfDepth;
+    vertices[index++] = -halfLength; vertices[index++] = verticalBeamTop + halfWidth; vertices[index++] = halfDepth;
+}
+
 int main() {
     // Initialize GLFW
     if (!glfwInit()) {
@@ -91,21 +126,40 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
 
+
+    float crossHeight = 0.7f;       // Height of vertical beam
+    float crossWidth = 0.6f;        // Width of horizontal beam
+    float beamThickness = 0.2f;     // Thickness of the beams
+    float depth = 0.1f;             // Depth of the cross
+
+
+    int crossVertexCount = 16; // 2 rectangles for vertical, 2 for horizontal
+    GLfloat* crossVertices = new GLfloat[crossVertexCount * 3];
+    generateCross(crossWidth, crossHeight, depth, beamThickness, crossVertices);
+
+
+    GLuint crossVAO, crossVBO;
+    glGenVertexArrays(1, &crossVAO);
+    glGenBuffers(1, &crossVBO);
+
+    glBindVertexArray(crossVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, crossVBO);
+    glBufferData(GL_ARRAY_BUFFER, crossVertexCount * 3 * sizeof(GLfloat), crossVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
     glm::mat4 view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
     // Cylinder lines
-    //glDrawArrays(GL_LINES, 0, vertexCount);
+   //  glDrawArrays(GL_LINES, 0, vertexCount);
 
     // Top circle
-   // glDrawArrays(GL_LINE_LOOP, 0, sectors + 1);
+    // glDrawArrays(GL_LINE_LOOP, 0, sectors + 1);
 
     // Bottom circle
-    //glDrawArrays(GL_LINE_LOOP, 0, sectors + 1);
+    // glDrawArrays(GL_LINE_LOOP, 0, sectors + 1);
 
-    // Camera setup
-    //glm::mat4 view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    //glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
     // Main render loop
     while (!glfwWindowShouldClose(window)) {
@@ -123,15 +177,12 @@ int main() {
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexCount);
 
-        //glfwSwapBuffers(window);
-        //glfwPollEvents();
-
-        // Apply camera projection
-      //  glMatrixMode(GL_PROJECTION);
-        //glLoadMatrixf(glm::value_ptr(projection));
-
-        //glMatrixMode(GL_MODELVIEW);
-        //glLoadMatrixf(glm::value_ptr(view));
+        //Draw the cross
+        glBindVertexArray(crossVAO);
+        glm::mat4 crossModel = glm::mat4(1.0f);
+        crossModel = glm::translate(crossModel, glm::vec3(0.0f, height / 2, 0.0f)); // Position cross on top of cylinder
+        shader.setMat4("model", crossModel);
+        glDrawArrays(GL_QUADS, 0, crossVertexCount);
 
         // Draw cylinder
         //glBindVertexArray(VAO[0]);
