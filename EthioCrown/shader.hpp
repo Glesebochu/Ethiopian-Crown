@@ -8,11 +8,13 @@
 #include <iostream>
 #include <glm/glm.hpp>
 
-class Shader {
+class Shader
+{
 public:
     unsigned int ID;
 
-    Shader(const char* vertexPath, const char* fragmentPath) {
+    Shader(const char *vertexPath, const char *fragmentPath)
+    {
         // 1. Retrieve the vertex/fragment source code from filePath
         std::string vertexCode;
         std::string fragmentCode;
@@ -22,7 +24,8 @@ public:
         // Ensure ifstream objects can throw exceptions
         vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        try {
+        try
+        {
             // Open files
             vShaderFile.open(vertexPath);
             fShaderFile.open(fragmentPath);
@@ -40,12 +43,13 @@ public:
             vertexCode = vShaderStream.str();
             fragmentCode = fShaderStream.str();
         }
-        catch (std::ifstream::failure& e) {
+        catch (std::ifstream::failure &e)
+        {
             std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESSFULLY_READ" << std::endl;
         }
 
-        const char* vShaderCode = vertexCode.c_str();
-        const char* fShaderCode = fragmentCode.c_str();
+        const char *vShaderCode = vertexCode.c_str();
+        const char *fShaderCode = fragmentCode.c_str();
 
         // 2. Compile shaders
         unsigned int vertex, fragment;
@@ -78,13 +82,14 @@ public:
 
     void use() { glUseProgram(ID); }
 
-    void setBool(const std::string& name, bool value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); }
+    void setBool(const std::string &name, bool value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), (int)value); }
 
-    void setInt(const std::string& name, int value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
+    void setInt(const std::string &name, int value) const { glUniform1i(glGetUniformLocation(ID, name.c_str()), value); }
 
-    void setFloat(const std::string& name, float value) const { glUniform1f(glGetUniformLocation(ID, name.c_str()), value); }
+    void setFloat(const std::string &name, float value) const { glUniform1f(glGetUniformLocation(ID, name.c_str()), value); }
 
-    void setVec3(const std::string& name, const glm::vec3& value) const {
+    void setVec3(const std::string &name, const glm::vec3 &value) const
+    {
         glUniform3fv(glGetUniformLocation(ID, name.c_str()), 1, &value[0]);
     }
 
@@ -99,23 +104,28 @@ public:
     }
 
 private:
-    void checkCompileErrors(unsigned int shader, std::string type) {
+    void checkCompileErrors(unsigned int shader, std::string type)
+    {
         int success;
         char infoLog[1024];
-        if (type != "PROGRAM") {
+        if (type != "PROGRAM")
+        {
             glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-            if (!success) {
+            if (!success)
+            {
                 glGetShaderInfoLog(shader, 1024, NULL, infoLog);
                 std::cerr << "ERROR::SHADER::" << type << "::COMPILATION_FAILED\n"
-                    << infoLog << std::endl;
+                          << infoLog << std::endl;
             }
         }
-        else {
+        else
+        {
             glGetProgramiv(shader, GL_LINK_STATUS, &success);
-            if (!success) {
+            if (!success)
+            {
                 glGetProgramInfoLog(shader, 1024, NULL, infoLog);
                 std::cerr << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
-                    << infoLog << std::endl;
+                          << infoLog << std::endl;
             }
         }
     }
