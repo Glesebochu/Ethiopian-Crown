@@ -8,7 +8,7 @@
 
 
 // Define the vertices of a cylinder
-void generateCylinder(float radius, float height, int sectors, GLfloat * vertices) {
+void generateCylinder(float radius, float height, int sectors, GLfloat* vertices) {
     int index = 0;
     float sectorStep = 2 * glm::pi<float>() / sectors;
     for (int i = 0; i <= sectors; ++i) {
