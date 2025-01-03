@@ -1,5 +1,7 @@
 {
   "files.associations": {
-    "functional": "cpp"
-  }
+    "functional": "cpp",
+    "xstring": "cpp"
+  },
+  "cmake.sourceDirectory": "C:/Users/zelal/Repositories/Ethiopian-Crown/EthioCrown/Dependencies/include/glm"
 }
