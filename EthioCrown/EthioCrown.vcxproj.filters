@@ -44,10 +44,24 @@
     <None Include=".gitignore" />
     <None Include="fragment_shader.glsl" />
     <None Include="vertex_shader.glsl" />
+    <None Include="build\cmake_install.cmake" />
+    <None Include="build\EthioCrown" />
+    <None Include="build\Makefile" />
+    <None Include="build\CMakeFiles\cmake.check_cache" />
+    <None Include="build\CMakeFiles\CMakeDirectoryInformation.cmake" />
+    <None Include="build\CMakeFiles\Makefile.cmake" />
+    <None Include="build\CMakeFiles\Makefile2" />
+    <None Include="build\CMakeFiles\progress.marks" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\libraries\glfw3_mt.lib" />
     <Library Include="Dependencies\libraries\glfw3dll.lib" />
     <Library Include="Dependencies\libraries\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="build\CMakeCache.txt" />
+    <Text Include="CMakeLists.txt" />
+    <Text Include="build\CMakeFiles\CMakeOutput.log" />
+    <Text Include="build\CMakeFiles\TargetDirectories.txt" />
   </ItemGroup>
 </Project>

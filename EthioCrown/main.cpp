@@ -117,7 +117,7 @@ int main()
     // Cylinder parameters
     int sectors = 36;
     float radiusOuter = 0.7f;
-    float radiusInner = 0.5f; // Inner radius to add thickness
+    float radiusInner = 0.2f; // Inner radius to add thickness
     float height = 0.7f;
 
     // Generate vertices
