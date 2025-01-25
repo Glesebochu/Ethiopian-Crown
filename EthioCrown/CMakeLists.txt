@@ -27,7 +27,12 @@ set(LIBS
 )
 
 # Create executable
-add_executable(EthioCrown ${SOURCES})
+add_executable(EthioCrown    
+    main.cpp
+    glad.c
+    glm.cpp
+    other_sources.cpp
+)
 
 # Link libraries to the executable
 target_link_libraries(EthioCrown ${LIBS})

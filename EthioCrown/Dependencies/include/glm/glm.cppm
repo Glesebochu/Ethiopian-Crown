@@ -1,4 +1,4 @@
-module;
+module glm;
 
 // #define GLM_GTC_INLINE_NAMESPACE to inline glm::gtc into glm
 // #define GLM_EXT_INLINE_NAMESPACE to inline glm::ext into glm
@@ -6,8 +6,6 @@ module;
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
-
-export module glm;
 
 export namespace glm {
 	// Base types
