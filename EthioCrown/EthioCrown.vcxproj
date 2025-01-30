@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\EthioCrown\Dependencies\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\EthioCrown\Dependencies\include;$(SolutionDir)\EthioCrown\stb_image.h\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -431,6 +431,7 @@
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\include\shaders.hpp" />
     <ClInclude Include="shader.hpp" />
+    <ClInclude Include="Include\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -584,6 +585,9 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Image.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

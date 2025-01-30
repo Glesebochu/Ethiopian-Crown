@@ -6,7 +6,30 @@
 #include <iostream>
 #include <vector>
 #include "shader.hpp"
+#define STB_IMAGE_IMPLEMENTATION  // Define before including stb_image.h
+#include "Include/stb_image.h" 
 
+GLuint loadTexture(const char* path) {
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load(path, &width, &height, &nrChannels, 0);
+    if (data) {
+        GLenum format = (nrChannels == 4) ? GL_RGBA : GL_RGB;
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    } else {
+        std::cerr << "Failed to load texture: " << path << std::endl;
+    }
+    stbi_image_free(data);
+    return textureID;
+}
 
 void generateHollowCylinder(float radiusOuter, float radiusInner, float height, int sectors, std::vector<GLfloat>& vertices, std::vector<GLuint>& indices)
 {
@@ -16,14 +39,21 @@ void generateHollowCylinder(float radiusOuter, float radiusInner, float height, 
     for (int i = 0; i <= sectors; ++i)
     {
         float angle = i * sectorStep;
+        float u = (float)i / sectors; // Map angle to [0, 1]
+
         // Outer top
         vertices.push_back(radiusOuter * cos(angle));
         vertices.push_back(height / 2);
         vertices.push_back(radiusOuter * sin(angle));
+        vertices.push_back(u);                       // Texture coordinate u
+        vertices.push_back(1.0f);                    // Texture coordinate v
+
         // Outer bottom
         vertices.push_back(radiusOuter * cos(angle));
         vertices.push_back(-height / 2);
         vertices.push_back(radiusOuter * sin(angle));
+        vertices.push_back(u);                       // Texture coordinate u
+        vertices.push_back(0.0f);                    // Texture coordinate v
 
         // Inner top
         vertices.push_back(radiusInner * cos(angle));
@@ -88,9 +118,6 @@ int main()
         return -1;
     }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     GLFWwindow* window = glfwCreateWindow(800, 600, "OpenGL Hollow Cylinder", NULL, NULL);
     if (!window)
@@ -106,7 +133,10 @@ int main()
         std::cerr << "Failed to initialize GLAD!" << std::endl;
         return -1;
     }
-
+    GLuint texture = loadTexture("C:/Users/User/source/repos/Glesebochu/Ethiopian-Crown/Ethiopian-Crown/EthioCrown/Image.jpg"); // Replace with your texture file name
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glEnable(GL_DEPTH_TEST);
 
 
@@ -119,7 +149,7 @@ int main()
     // Cylinder parameters
     int sectors = 36;
     float radiusOuter = 1.0f;
-    float radiusInner = 0.9f; // Inner radius for hollow effect
+    float radiusInner = 0.87f; // Inner radius for hollow effect
     float height = 1.0f;
 
     std::vector<GLfloat> vertices;
@@ -139,9 +169,9 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)0); // Position
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*)(3 * sizeof(GLfloat))); // Texture
     glEnableVertexAttribArray(1);
 
 
@@ -154,7 +184,11 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        shader.setInt("texture1", 0);
 
+        // Set transformation matrices
         glm::mat4 model = glm::mat4(1.0f);
         shader.setMat4("model", model);
         shader.setMat4("view", view);

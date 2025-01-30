@@ -3,7 +3,9 @@ out vec4 FragColor;
 
 in vec3 FragPos;
 in vec3 Normal;
+in vec2 TexCoord;
 
+uniform sampler2D texture1;
 uniform vec3 objectColor;   // Base object color
 uniform vec3 lightColor;    // Spotlight color
 uniform vec3 lightPos;      // Spotlight position
@@ -15,6 +17,7 @@ uniform vec3 outsideColor;  // Outer wall color
 uniform vec3 insideColor;   // Inner wall color
 
 void main() {
+    FragColor = texture(texture1, TexCoord);
     // Normalize vectors
     vec3 norm = normalize(Normal);
     vec3 lightDirNorm = normalize(lightPos - FragPos);
@@ -45,18 +48,14 @@ void main() {
         norm = -norm;
     }
 
+
     // Determine color for top, bottom, and sides
     vec3 resultColor;
     if (FragPos.y > 0.49) {
         resultColor = vec3(1.0f, 0.9f, 0.4f); // White for the top
     } else if (FragPos.y < -0.49) {
         resultColor = vec3(1.0f, 0.9f, 0.4f); // White for the bottom
-    } else if (dot(norm, lightDirNorm) < 0.0) {
-        resultColor = insideColor; // Darker color for the inside walls
-    } else {
-        resultColor = outsideColor; // Brighter color for the outer walls
-    }
-
+    } 
     // Combine lighting effects with spotlight intensity
     vec3 finalColor = ambient + intensity * (diffuse + specular);
     FragColor = vec4(finalColor * resultColor, 1.0);
