@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+﻿#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -130,11 +130,11 @@ void generateCross(float width, float height, float thickness, std::vector<GLflo
     };
 }
 
-int main()
-{
+int main() {
     // Initialize GLFW
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
+        std::cerr << "Failed to initialize GLFW!" << std::endl;
         return -1;
     }
 
@@ -142,26 +142,26 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
     // Create window
     GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Textured Hollow Cylinder with Cross", NULL, NULL);
     if (!window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
+    {
         glfwTerminate();
         return -1;
     }
-
     glfwMakeContextCurrent(window);
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD" << std::endl;
+        std::cerr << "Failed to initialize GLAD!" << std::endl;
         return -1;
     }
-
     glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     // Load shaders
     Shader shader("vertex_shader.glsl", "fragment_shader.glsl");
-
+    checkOpenGLError("Shader Compilation");  // ✅ Check errors after shader loading
     // Generate cylinder
     std::vector<GLfloat> vertices;
     std::vector<GLuint> indices;
@@ -171,8 +171,9 @@ int main()
     std::vector<GLfloat> crossVertices;
     std::vector<GLuint> crossIndices;
     generateCross(CROSS_WIDTH, CROSS_HEIGHT, CROSS_THICKNESS, crossVertices, crossIndices);
-
+    generateHollowCylinder(radiusOuter, radiusInner, height, sectors, vertices, indices);
     // Set up VAO, VBO, and EBOs for cylinder
+    // VAO, VBO, and EBO setup
     GLuint VAO, VBO, EBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -180,11 +181,10 @@ int main()
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
-
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
@@ -209,10 +209,10 @@ int main()
 
     // Vertex attributes (x, y, z, u, v)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
-
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
@@ -289,16 +289,17 @@ int main()
 
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
-
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
     // Render loop
+
     while (!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use shader
         shader.use();
-
         // Set transformation matrices
+
         glm::mat4 model = glm::mat4(1.0f);
         glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 3.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -318,13 +319,13 @@ int main()
         shader.setFloat("cutOff", glm::cos(glm::radians(50.0f)));  // Inner cone angle for direct illumination
         shader.setFloat("outerCutOff", glm::cos(glm::radians(60.0f))); // Wider outer cone angle for smoother edges
         shader.setVec3("insideColor", glm::vec3(0.6f, 0.5f, 0.2f));  // Darker gold for inner surface
-
         // Pass the updated model matrix to the shader
         glm::mat4 crossModel = glm::translate(model, glm::vec3(0.0f, HEIGHT / 2 + CROSS_HEIGHT / 2 + 0.55, 1.8f));
         shader.setMat4("model", crossModel);
         glBindTexture(GL_TEXTURE_2D, crossTexture);
         glBindVertexArray(crossVAO);
         glDrawElements(GL_TRIANGLES, crossIndices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
         // Swap buffers and poll events
         glfwSwapBuffers(window);

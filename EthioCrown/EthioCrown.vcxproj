@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\EthioCrown\Dependencies\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\EthioCrown\Dependencies\include;$(SolutionDir)\EthioCrown\stb_image.h\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -587,10 +587,14 @@
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <Image Include="cross.png" />
     <Image Include="golden.png" />
     <Image Include="goldi.jpg" />
     <Image Include="heyy.jpg" />
+=======
+    <Image Include="Image.jpg" />
+>>>>>>> 0f7d487dca7e35269c74bc9b628c9ecbf382294f
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

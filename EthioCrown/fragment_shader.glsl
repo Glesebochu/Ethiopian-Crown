@@ -2,8 +2,14 @@
 out vec4 FragColor;
 
 in vec3 FragPos;
+<<<<<<< HEAD
 in vec2 TexCoord; // Texture coordinates
+=======
+in vec3 Normal;
+in vec2 TexCoord;
+>>>>>>> 0f7d487dca7e35269c74bc9b628c9ecbf382294f
 
+uniform sampler2D texture1;
 uniform vec3 objectColor;   // Base object color
 uniform vec3 lightColor;    // Spotlight color
 uniform vec3 lightPos;      // Spotlight position
@@ -43,6 +49,7 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16.0); // Softer highlights
     vec3 specular = specularStrength * spec * lightColor;
 
+<<<<<<< HEAD
     // Determine color for top, bottom, and sides
     vec3 resultColor;
     if (FragPos.y > 0.49) {
@@ -51,8 +58,17 @@ void main() {
         resultColor = outsideColor; // Brighter color for the bottom
     } else if (dot(norm, lightDirNorm) < 0.0) {
         resultColor = insideColor; // Darker color for the inside walls
+=======
+    // Apply texture only to the outer surface
+    vec3 textureColor = texture(texture1, TexCoord).rgb;
+
+    // Determine if the fragment belongs to the inner or outer cylinder
+    vec3 resultColor;
+    if (dot(norm, lightDirNorm) < 0.0) {
+        resultColor = insideColor;  // Apply insideColor for the inner cylinder
+>>>>>>> 0f7d487dca7e35269c74bc9b628c9ecbf382294f
     } else {
-        resultColor = outsideColor; // Brighter color for the outer walls
+        resultColor = textureColor; // Apply texture for the outer cylinder
     }
 
     // Sample the appropriate texture based on the surface
@@ -65,7 +81,11 @@ void main() {
 
     // Combine lighting effects with spotlight intensity
     vec3 finalColor = (ambient + intensity * (diffuse + specular)) * resultColor;
+<<<<<<< HEAD
 
     // Mix lighting with texture
     FragColor = mix(vec4(finalColor, 1.0), texColor, 0.7); // Blend lighting with texture
+=======
+    FragColor = vec4(finalColor, 1.0);
+>>>>>>> 0f7d487dca7e35269c74bc9b628c9ecbf382294f
 }
