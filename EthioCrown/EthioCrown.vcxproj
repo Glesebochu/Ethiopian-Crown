@@ -431,6 +431,7 @@
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\include\shaders.hpp" />
     <ClInclude Include="shader.hpp" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
@@ -584,6 +585,12 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="cross.png" />
+    <Image Include="golden.png" />
+    <Image Include="goldi.jpg" />
+    <Image Include="heyy.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
