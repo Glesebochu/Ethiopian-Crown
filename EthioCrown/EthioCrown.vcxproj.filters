@@ -911,6 +911,9 @@
     <ClInclude Include="Dependencies\include\shaders.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Dependencies\libraries\glfw3.dll" />
@@ -1340,5 +1343,10 @@
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Image.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
