@@ -431,7 +431,7 @@
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\include\shaders.hpp" />
     <ClInclude Include="shader.hpp" />
-    <ClInclude Include="Include\stb_image.h" />
+    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />

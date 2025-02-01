@@ -17,7 +17,6 @@ uniform vec3 outsideColor;  // Outer wall color
 uniform vec3 insideColor;   // Inner wall color
 
 void main() {
-    FragColor = texture(texture1, TexCoord);
     // Normalize vectors
     vec3 norm = normalize(Normal);
     vec3 lightDirNorm = normalize(lightPos - FragPos);
@@ -43,20 +42,18 @@ void main() {
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 16.0); // Softer highlights
     vec3 specular = specularStrength * spec * lightColor;
 
-    // Two-sided lighting: flip normal if facing away
+    // Apply texture only to the outer surface
+    vec3 textureColor = texture(texture1, TexCoord).rgb;
+
+    // Determine if the fragment belongs to the inner or outer cylinder
+    vec3 resultColor;
     if (dot(norm, lightDirNorm) < 0.0) {
-        norm = -norm;
+        resultColor = insideColor;  // Apply insideColor for the inner cylinder
+    } else {
+        resultColor = textureColor; // Apply texture for the outer cylinder
     }
 
-
-    // Determine color for top, bottom, and sides
-    vec3 resultColor;
-    if (FragPos.y > 0.49) {
-        resultColor = vec3(1.0f, 0.9f, 0.4f); // White for the top
-    } else if (FragPos.y < -0.49) {
-        resultColor = vec3(1.0f, 0.9f, 0.4f); // White for the bottom
-    } 
     // Combine lighting effects with spotlight intensity
-    vec3 finalColor = ambient + intensity * (diffuse + specular);
-    FragColor = vec4(finalColor * resultColor, 1.0);
+    vec3 finalColor = (ambient + intensity * (diffuse + specular)) * resultColor;
+    FragColor = vec4(finalColor, 1.0);
 }
