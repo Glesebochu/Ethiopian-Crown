@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec3 FragPos;
 in vec2 TexCoord; // Texture coordinates
 
-uniform sampler2D texture1;
 uniform vec3 objectColor;   // Base object color
 uniform vec3 lightColor;    // Spotlight color
 uniform vec3 lightPos;      // Spotlight position
@@ -18,12 +17,8 @@ uniform vec3 insideColor;   // Inner wall color
 uniform sampler2D texture1; // Outer texture sampler
 uniform sampler2D texture2; // Inner texture sampler
 
-uniform sampler2D texture1; // Outer texture sampler
-uniform sampler2D texture2; // Inner texture sampler
-
 void main() {
     // Normalize vectors
-    vec3 norm = normalize(cross(dFdx(FragPos), dFdy(FragPos)));
     vec3 norm = normalize(cross(dFdx(FragPos), dFdy(FragPos)));
     vec3 lightDirNorm = normalize(lightPos - FragPos);
     vec3 viewDir = normalize(viewPos - FragPos);
@@ -50,18 +45,7 @@ void main() {
 
     // Determine color for top, bottom, and sides
     vec3 resultColor;
-    if (FragPos.y > 0.49) {
-        resultColor = outsideColor; // Brighter color for the top
-        resultColor = outsideColor; // Brighter color for the top
-    } else if (FragPos.y < -0.49) {
-        resultColor = outsideColor; // Brighter color for the bottom
-        resultColor = outsideColor; // Brighter color for the bottom
-    } else if (dot(norm, lightDirNorm) < 0.0) {
-        resultColor = insideColor; // Darker color for the inside walls
-    } else {
-        texColor = texture(texture1, TexCoord); // Use outer texture for outside surfaces
-    }
-
+    
     // Sample the appropriate texture based on the surface
     vec4 texColor;
     if (resultColor == insideColor) {
@@ -74,5 +58,5 @@ void main() {
     vec3 finalColor = (ambient + intensity * (diffuse + specular)) * resultColor;
 
     // Mix lighting with texture
-    FragColor = mix(vec4(finalColor, 1.0), texColor, 0.7); // Blend lighting with texture
+    FragColor = mix(vec4(finalColor, 3.0), texColor,1.2); // Blend lighting with texture
 }

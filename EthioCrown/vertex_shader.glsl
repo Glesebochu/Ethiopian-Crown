@@ -1,5 +1,4 @@
 #version 330 core
-<<<<<<< HEAD
 layout(location = 0) in vec3 aPos;   // Vertex position
 layout(location = 1) in vec2 aTexCoord; // Texture coordinates
 
@@ -12,10 +11,7 @@ uniform mat4 projection;
 
 void main()
 {
-<<<<<<< HEAD
     FragPos = vec3(model * vec4(aPos, 1.0));  // Transform vertex position
     TexCoord = aTexCoord; // Pass texture coordinates
-    TexCoord = aTexCoord; // Pass texture coordinates
-
     gl_Position = projection * view * vec4(FragPos, 1.0);
 }
