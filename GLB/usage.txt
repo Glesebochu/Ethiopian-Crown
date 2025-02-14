@@ -1,0 +1,2 @@
+run this on terminal: python -m http.server 8000
+then on your browser run: http://localhost:8000/index.html
