@@ -432,7 +432,6 @@
     <ClInclude Include="Dependencies\include\shaders.hpp" />
     <ClInclude Include="shader.hpp" />
     <ClInclude Include="stb_image.h" />
-    <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".gitignore" />
