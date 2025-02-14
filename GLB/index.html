@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Babylon.js GLB Viewer with Pointer Transformation</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: linear-gradient(to bottom, #e0e0e0, #ffffff);
+      }
+      canvas { display: block; width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <!-- The canvas element where Babylon.js will render the scene -->
+    <canvas id="renderCanvas"></canvas>
+    
+    <!-- Babylon.js core and loaders -->
+    <script src="libs/babylon.js"></script>
+    <script src="libs/babylonjs.loaders.min.js"></script>
+    
+    <script>
+      // Get the canvas element and create the Babylon.js engine
+      const canvas = document.getElementById("renderCanvas");
+      const engine = new BABYLON.Engine(canvas, true);
+
+      // Create the scene
+      const createScene = function () {
+        const scene = new BABYLON.Scene(engine);
+        
+        // Create an ArcRotateCamera and disable its default inputs
+        const camera = new BABYLON.ArcRotateCamera(
+          "camera",
+          Math.PI / 2,
+          Math.PI / 4,
+          10,
+          BABYLON.Vector3.Zero(),
+          scene
+        );
+        camera.attachControl(canvas, false);
+        camera.inputs.clear(); // Remove default controls
+
+        // Add some lights
+        new BABYLON.HemisphericLight("ambientLight", new BABYLON.Vector3(0, 1, 0), scene).intensity = 0.5;
+        new BABYLON.DirectionalLight("directionalLight", new BABYLON.Vector3(-1, -1, -1), scene).intensity = 1.5;
+        new BABYLON.PointLight("pointLight", new BABYLON.Vector3(0, 5, 0), scene).intensity = 1.0;
+        
+        // Variable to hold our loaded model (as a parent transform node)
+        let model = null;
+        
+        // Load the GLB model
+        BABYLON.SceneLoader.ImportMesh(
+          "",
+          "",
+          "crown.glb",
+          scene,
+          function (meshes) {
+            // Create a root transform node to combine all imported meshes
+            const root = new BABYLON.TransformNode("modelRoot", scene);
+            meshes.forEach(function (mesh) {
+              mesh.parent = root;
+            });
+            model = root;
+            model.scaling = new BABYLON.Vector3(1, 1, 1);
+            
+            // Convert materials to an unlit look
+            meshes.forEach(function (mesh) {
+              if (mesh.material) {
+                if (mesh.material instanceof BABYLON.PBRMaterial) {
+                  mesh.material.unlit = true;
+                } else if (mesh.material.disableLighting !== undefined) {
+                  mesh.material.disableLighting = true;
+                }
+              }
+            });
+          },
+          undefined,
+          function (scene, message, exception) {
+            console.error("Error loading GLB file:", message, exception);
+          }
+        );
+        
+        // --- Pointer Interaction for Rotation and Scaling ---
+        let isDragging = false;
+        let previousPointerPosition = { x: 0, y: 0 };
+        
+        // Pointer down: start dragging
+        canvas.addEventListener("pointerdown", function (event) {
+          isDragging = true;
+          previousPointerPosition.x = event.clientX;
+          previousPointerPosition.y = event.clientY;
+          canvas.setPointerCapture(event.pointerId);
+          event.preventDefault();
+        });
+        
+        // Pointer up: stop dragging
+        canvas.addEventListener("pointerup", function (event) {
+          isDragging = false;
+          canvas.releasePointerCapture(event.pointerId);
+          event.preventDefault();
+        });
+        
+        // Pointer move: if dragging and model is loaded, rotate the model
+        canvas.addEventListener("pointermove", function (event) {
+          if (isDragging && model) {
+            const deltaX = event.clientX - previousPointerPosition.x;
+            const deltaY = event.clientY - previousPointerPosition.y;
+            
+            // Adjust the sensitivity as needed:
+            model.rotation.y += deltaX * 0.01; // Rotate around the Y-axis
+            model.rotation.x += deltaY * 0.01; // Rotate around the X-axis
+            
+            previousPointerPosition.x = event.clientX;
+            previousPointerPosition.y = event.clientY;
+            event.preventDefault();
+          }
+        });
+        
+        // Wheel: scale the model
+        canvas.addEventListener("wheel", function (event) {
+          if (model) {
+            event.preventDefault();
+            const scaleFactor = event.deltaY > 0 ? 0.95 : 1.05; // Zoom out or in
+            model.scaling.scaleInPlace(scaleFactor);
+          }
+        });
+        
+        // Prevent the context menu from appearing on right-click
+        canvas.addEventListener("contextmenu", function (e) {
+          e.preventDefault();
+        });
+        
+        return scene;
+      };
+      
+      // Create the scene and start the render loop
+      const scene = createScene();
+      engine.runRenderLoop(function () {
+        scene.render();
+      });
+      
+      // Resize the engine on window resize
+      window.addEventListener("resize", function () {
+        engine.resize();
+      });
+    </script>
+  </body>
+</html>
